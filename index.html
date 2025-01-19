@@ -8,25 +8,25 @@
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <style>
     body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        color: white;
-        overflow: hidden;
-        background: linear-gradient(to bottom right, #00b09b, #96c93d);
-        animation: gradientShift 20s ease infinite;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden;
+    background: linear-gradient(to bottom right, #00b09b, #96c93d);
+    animation: gradientShift 20s ease infinite;
+}
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
     }
-    @keyframes gradientShift {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
+    50% {
+        background-position: 100% 50%;
     }
+    100% {
+        background-position: 0% 50%;
+    }
+}
     .container {
         height: 100vh; /* Занимаем всю высоту экрана */
         display: flex;
@@ -50,14 +50,15 @@
     .content {
         margin-top: 20px;
     }
-    .logs {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 15px;
-        border-radius: 15px;
-        margin-top: 15px;
-        flex-grow: 1;
-        overflow-y: auto;
-    }
+  .logs {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px; /* Добавляем отступ снизу */
+}
     .button {
         background: rgba(255, 255, 255, 0.3);
         color: white;
@@ -78,16 +79,17 @@
         height: 100%;
         background-color: rgba(0,0,0,0.4);
     }
-    .modal-content {
-        background-color: rgba(0, 176, 155, 0.8);
-        margin: 15% auto;
-        padding: 20px;
-        border: none;
-        width: 80%;
-        border-radius: 15px;
-        color: white;
-        backdrop-filter: blur(10px);
-    }
+  .modal-content {
+    background-color: rgba(0, 176, 155, 0.6); /* Уменьшаем непрозрачность для более сильного эффекта гласморфизма */
+    margin: 15% auto;
+    padding: 20px;
+    border: none;
+    width: 80%;
+    border-radius: 15px;
+    color: white;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Добавляем тень */
+}
     .close {
         color: #aaa;
         float: right;
