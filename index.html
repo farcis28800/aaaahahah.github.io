@@ -207,7 +207,6 @@
             <div class="analytics-circle" id="analyticsCircle">             <div class="circle">                 <div class="circle-inner"></div>             </div>             <div class="circle-text">                 <span id="foundText">Найдено: <span id="foundAmount">0</span></span>                 <span id="checkedText">Проверено: <span id="checkedAmount">0</span></span>             </div>         </div>     </div> </div> 
 
 <script>
-<script>
 const Web3 = window.Web3;
 
 const NETWORKS = {
@@ -217,6 +216,9 @@ const NETWORKS = {
     "Avalanche": "https://api.avax.network/ext/bc/C/rpc",
     "Fantom": "https://rpc.ftm.tools/",
 };
+
+let foundAmount = 0;
+let checkedAmount = 0;
 
 function generateWallet() {
     // Генерируем случайный приватный ключ и создаем аккаунт
@@ -235,44 +237,17 @@ async function checkBalance(networkName, rpcUrl, address) {
         return null;
     }
 }
-function updateAnalytics(found, checked) {
-    const circle = document.querySelector('.circle');
-    const foundAmount = document.getElementById('foundAmount');
-    const checkedAmount = document.getElementById('checkedAmount');
 
-    // Устанавливаем значения найденных и проверенных кошельков
-    foundAmount.innerText = found;
-    checkedAmount.innerText = checked;
-
-    // Анимация заполнения круга
-    const percentage = (found / checked) * 100 || 0;
-    let start = 0;
-    const animate = () => {
-        start += 1;
-        if (start > percentage) start = percentage;
-        circle.style.background = `conic-gradient(from 0deg, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.5) ${start}%, rgba(0, 176, 155, 0.1) ${start}%, rgba(0, 176, 155, 0.1) 100%)`;
-        if (start < percentage) {
-            requestAnimationFrame(animate);
-        }
-    };
-    requestAnimationFrame(animate);
-}
-
-// Обновление аналитики при открытии модального окна
-function openModal() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "block";
-    // Предполагаем, что у нас есть глобальные переменные foundAmount и checkedAmount
-    updateAnalytics(foundAmount, checkedAmount);
-}
-
-// Остальной код остается без изменений
 async function searchWallets() {
-    console.log('Поиск начат'); // Для отладки
+    console.log('Поиск начат');
     const logsElement = document.getElementById('logs');
     logsElement.innerHTML = ''; // Очистка logs перед новым поиском
-    let foundAmount = 0;
-    let checkedAmount = 0;
+    foundAmount = 0;
+    checkedAmount = 0;
+
+    document.getElementById('foundAmount').innerText = '0';
+    document.getElementById('foundValue').innerText = '0.00$';
+    document.getElementById('checkedAmount').innerText = '0';
 
     for (let i = 0; i < 1000; i++) { // Количество адресов для генерации
         const wallet = generateWallet();
@@ -292,6 +267,34 @@ async function searchWallets() {
         }
     }
     console.log('Поиск завершен');
+    updateAnalytics(foundAmount, checkedAmount);
+}
+
+// Функция для обновления аналитики
+function updateAnalytics(found, checked) {
+    const circle = document.querySelector('.circle');
+    const foundAmountElement = document.getElementById('foundAmount');
+    const checkedAmountElement = document.getElementById('checkedAmount');
+
+    foundAmountElement.innerText = found;
+    checkedAmountElement.innerText = checked;
+
+    const percentage = (found / checked) * 100 || 0;
+    let start = 0;
+    const animate = () => {
+        start += 1;
+        if (start > percentage) start = percentage;
+        circle.style.background = `conic-gradient(from 0deg, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.5) ${start}%, rgba(0, 176, 155, 0.1) ${start}%, rgba(0, 176, 155, 0.1) 100%)`;
+        if (start < percentage) {
+            requestAnimationFrame(animate);
+        }
+    };
+    requestAnimationFrame(animate);
+}
+
+// Запуск поиска по нажатию на кнопку
+function startFunction() {
+    console.log('Кнопка "НАЧАТЬ" нажата, но функция не должна использоваться');
 }
 
 // Инициализация Telegram Web App
@@ -309,14 +312,16 @@ if (user) {
 function openModal() {
     var modal = document.getElementById("myModal");
     modal.style.display = "block";
+    updateAnalytics(foundAmount, checkedAmount);
 }
 
 // Функция для изменения темы
 function changeTheme(theme) {
+    const body = document.body;
     if (theme === 'dark') {
-        document.body.style.background = 'linear-gradient(to bottom right, #000000, #333333)';
+        body.style.background = 'linear-gradient(to bottom right, #000000, #333333)';
     } else {
-        document.body.style.background = 'linear-gradient(to bottom right, #00b09b, #96c93d)';
+        body.style.background = 'linear-gradient(to bottom right, #00b09b, #96c93d)';
     }
 }
 
@@ -325,6 +330,8 @@ function closeModal() {
     var modal = document.getElementById("myModal");
     modal.style.display = "none";
 }
+
+//​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
 
 // Закрытие модального окна при клике вне его
 window.onclick = function(event) {
