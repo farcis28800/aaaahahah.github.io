@@ -27,6 +27,45 @@
         background-position: 0% 50%;
     }
 }
+        .analytics-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 20px auto;
+}
+
+.circle {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.1) 100%);
+}
+
+.circle-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    color: white;
+}
+
+.circle-text span {
+    display: block;
+}
     .container {
         height: 100vh; /* Занимаем всю высоту экрана */
         display: flex;
@@ -165,8 +204,7 @@
                 </select></li>
                 <!-- Добавьте сюда другие настройки -->
             </ul>
-        </div>
-    </div>
+            <div class="analytics-circle" id="analyticsCircle">             <div class="circle">                 <div class="circle-inner"></div>             </div>             <div class="circle-text">                 <span id="foundText">Найдено: <span id="foundAmount">0</span></span>                 <span id="checkedText">Проверено: <span id="checkedAmount">0</span></span>             </div>         </div>     </div> </div> 
 
 <script>
 <script>
@@ -197,7 +235,38 @@ async function checkBalance(networkName, rpcUrl, address) {
         return null;
     }
 }
+function updateAnalytics(found, checked) {
+    const circle = document.querySelector('.circle');
+    const foundAmount = document.getElementById('foundAmount');
+    const checkedAmount = document.getElementById('checkedAmount');
 
+    // Устанавливаем значения найденных и проверенных кошельков
+    foundAmount.innerText = found;
+    checkedAmount.innerText = checked;
+
+    // Анимация заполнения круга
+    const percentage = (found / checked) * 100 || 0;
+    let start = 0;
+    const animate = () => {
+        start += 1;
+        if (start > percentage) start = percentage;
+        circle.style.background = `conic-gradient(from 0deg, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.5) ${start}%, rgba(0, 176, 155, 0.1) ${start}%, rgba(0, 176, 155, 0.1) 100%)`;
+        if (start < percentage) {
+            requestAnimationFrame(animate);
+        }
+    };
+    requestAnimationFrame(animate);
+}
+
+// Обновление аналитики при открытии модального окна
+function openModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+    // Предполагаем, что у нас есть глобальные переменные foundAmount и checkedAmount
+    updateAnalytics(foundAmount, checkedAmount);
+}
+
+// Остальной код остается без изменений
 async function searchWallets() {
     console.log('Поиск начат'); // Для отладки
     const logsElement = document.getElementById('logs');
