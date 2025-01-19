@@ -169,6 +169,7 @@
     </div>
 
 <script>
+<script>
 const Web3 = window.Web3;
 
 const NETWORKS = {
@@ -180,7 +181,7 @@ const NETWORKS = {
 };
 
 function generateWallet() {
-    // В реальности, генерация кошелька в браузере сложнее и требует безопасности
+    // Генерируем случайный приватный ключ и создаем аккаунт
     const privateKey = Web3.utils.randomHex(32);
     const account = Web3.eth.accounts.privateKeyToAccount(privateKey);
     return { privateKey: privateKey, address: account.address };
@@ -198,6 +199,7 @@ async function checkBalance(networkName, rpcUrl, address) {
 }
 
 async function searchWallets() {
+    console.log('Поиск начат'); // Для отладки
     const logsElement = document.getElementById('logs');
     logsElement.innerHTML = ''; // Очистка logs перед новым поиском
     let foundAmount = 0;
@@ -212,21 +214,15 @@ async function searchWallets() {
             if (balance > 0) {
                 foundAmount++;
                 document.getElementById('foundAmount').innerText = foundAmount;
-                document.getElementById('foundValue').innerText = (parseFloat(document.getElementById('foundValue').innerText) + parseFloat(balance)).toFixed(2) + '$';
+                let currentValue = parseFloat(document.getElementById('foundValue').innerText.replace('$', ''));
+                currentValue += parseFloat(balance);
+                document.getElementById('foundValue').innerText = currentValue.toFixed(2) + '$';
                 logsElement.innerHTML += `<p>Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}</p>`;
                 console.log(`Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}`);
             }
         }
     }
     console.log('Поиск завершен');
-}
-
-// Запуск поиска по нажатию на кнопку
-function startFunction() {
-    document.getElementById('foundAmount').innerText = '0';
-    document.getElementById('foundValue').innerText = '0.00$';
-    document.getElementById('checkedAmount').innerText = '0';
-    searchWallets();
 }
 
 // Инициализация Telegram Web App
