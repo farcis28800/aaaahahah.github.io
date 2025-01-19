@@ -68,7 +68,7 @@
         font-size: 18px;
         cursor: pointer;
     }
-    .modal {
+   .modal {
     display: none;
     position: fixed;
     z-index: 1000; /* Увеличиваем z-index для обеспечения наложения поверх всего */
@@ -77,10 +77,12 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.4); /* Подложка для усиления эффекта блюра */
+    backdrop-filter: blur(5px); /* Добавляем легкий блюр на подложку для дополнительного эффекта */
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background-color: rgba(0, 176, 155, 0.6);
+    background-color: rgba(0, 176, 155, 0.3); /* Уменьшаем непрозрачность для видимости контента под окном */
     margin: 15% auto;
     padding: 20px;
     border: none;
