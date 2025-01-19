@@ -4,64 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMOLED MiniApp</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+       <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-    <script>
-const Web3 = window.Web3;
-
-const NETWORKS = {
-    "Ethereum": "https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY",
-    "Binance Smart Chain": "https://bsc-dataseed.binance.org/",
-    "Polygon": "https://polygon-rpc.com",
-    "Avalanche": "https://api.avax.network/ext/bc/C/rpc",
-    "Fantom": "https://rpc.ftm.tools/",
-};
-
-function generateWallet() {
-    // В реальности, генерация кошелька в браузере сложнее и требует безопасности
-    const privateKey = Web3.utils.randomHex(32);
-    const account = Web3.eth.accounts.privateKeyToAccount(privateKey);
-    return { privateKey: privateKey, address: account.address };
-}
-
-async function checkBalance(networkName, rpcUrl, address) {
-    const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
-    try {
-        const balance = await web3.eth.getBalance(address);
-        return web3.utils.fromWei(balance, 'ether');
-    } catch (error) {
-        console.error(`Ошибка при подключении к ${networkName}:`, error);
-        return null;
-    }
-}
-
-async function searchWallets() {
-    const wallets = [];
-    for (let i = 0; i < 1000; i++) { // Количество адресов для генерации
-        const wallet = generateWallet();
-        for (const [networkName, rpcUrl] of Object.entries(NETWORKS)) {
-            const balance = await checkBalance(networkName, rpcUrl, wallet.address);
-            if (balance > 0) {
-                wallets.push({
-                    network: networkName,
-                    address: wallet.address,
-                    privateKey: wallet.privateKey,
-                    balance: parseFloat(balance),
-                    foundAt: new Date().toISOString()
-                });
-                console.log(`Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}`);
-            }
-        }
-    }
-    // Здесь вы могли бы сохранить результаты или отобразить их
-    console.log('Найденные кошельки:', wallets);
-}
-
-// Запуск поиска по нажатию на кнопку
-document.querySelector('.button').addEventListener('click', async function() {
-    await searchWallets();
-});
-    </script>
     <style>
         body {
             margin: 0;
@@ -70,9 +14,9 @@ document.querySelector('.button').addEventListener('click', async function() {
             color: white;
             overflow: hidden;
             background: linear-gradient(to bottom right, #00b09b, #96c93d);
-            animation: ripple 10s infinite;
+            animation: gradientShift 20s ease infinite;
         }
-        @keyframes ripple {
+        @keyframes gradientShift {
             0% {
                 background-position: 0% 50%;
             }
@@ -84,7 +28,12 @@ document.querySelector('.button').addEventListener('click', async function() {
             }
         }
         .container {
+            height: 100vh; /* Занимаем всю высоту экрана /
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             padding: 20px;
+            box-sizing: border-box;
         }
         .header {
             display: flex;
@@ -106,7 +55,8 @@ document.querySelector('.button').addEventListener('click', async function() {
             padding: 20px;
             border-radius: 15px;
             margin-top: 20px;
-            height: 300px;
+            flex-grow: 1;
+            overflow-y: auto;
         }
         .button {
             background: rgba(255, 255, 255, 0.3);
@@ -114,11 +64,10 @@ document.querySelector('.button').addEventListener('click', async function() {
             padding: 10px;
             text-align: center;
             border-radius: 15px;
-            margin-top: 20px;
             font-size: 18px;
             cursor: pointer;
         }
-        /* Modal Styles */
+        / Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -130,13 +79,14 @@ document.querySelector('.button').addEventListener('click', async function() {
             background-color: rgba(0,0,0,0.4);
         }
         .modal-content {
-            background-color: #fefefe;
+            background-color: rgba(0, 176, 155, 0.8);
             margin: 15% auto;
             padding: 20px;
-            border: 1px solid #888;
+            border: none;
             width: 80%;
             border-radius: 15px;
-            color: black;
+            color: white;
+            backdrop-filter: blur(10px);
         }
         .close {
             color: #aaa;
@@ -147,7 +97,7 @@ document.querySelector('.button').addEventListener('click', async function() {
         }
         .close:hover,
         .close:focus {
-            color: black;
+            color: white;
             text-decoration: none;
             cursor: pointer;
         }
@@ -157,58 +107,28 @@ document.querySelector('.button').addEventListener('click', async function() {
         }
         .settings-list li {
             margin: 10px 0;
+            font-size: 16px;
         }
         .user-info {
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
         }
         .user-info img {
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             margin-right: 10px;
+            width: 50px;
+            height: 50px;
         }
-        <style>
-    /* Добавьте это в ваш существующий CSS */
-    .modal-content {
-        background-color: rgba(0, 176, 155, 0.8); /* Используем цвет основного фона */
-        backdrop-filter: blur(10px);
-        color: white;
-        border: none;
-    }
-    .settings-list li {
-        margin: 10px 0;
-        font-size: 16px;
-    }
-    .user-info {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .user-info img {
-        border: 2px solid rgba(255, 255, 255, 0.5);
-    }
-    select {
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        border: none;
-        padding: 5px;
-        border-radius: 10px;
-    }
-        @keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-body {
-    animation: gradientShift 20s ease infinite;
-}
-</style>
+        select {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 10px;
+        }
+    </style>
     </style>
 </head>
 <body>
@@ -245,24 +165,86 @@ body {
         </div>
     </div>
 
-    <script>
-        // Инициализация Telegram Web App
-        window.Telegram.WebApp.ready();
+<script>
+const Web3 = window.Web3;
 
-        // Получение данных пользователя
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        if (user) {
-            document.getElementById('username').innerText = `@${user.username}`;
-            document.getElementById('userInfo').innerText = `ID: ${user.id}, Имя: ${user.first_name} ${user.last_name ? user.last_name : ''}`;
-            document.getElementById('userAvatar').src = user.photo_url || 'default_avatar.png'; // Используйте URL аватарки, если доступно
-        }
+const NETWORKS = {
+    "Ethereum": "https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY",
+    "Binance Smart Chain": "https://bsc-dataseed.binance.org/",
+    "Polygon": "https://polygon-rpc.com",
+    "Avalanche": "https://api.avax.network/ext/bc/C/rpc",
+    "Fantom": "https://rpc.ftm.tools/",
+};
 
-        // Функция для открытия модального окна
-        function openModal() {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "block";
+function generateWallet() {
+    // В реальности, генерация кошелька в браузере сложнее и требует безопасности
+    const privateKey = Web3.utils.randomHex(32);
+    const account = Web3.eth.accounts.privateKeyToAccount(privateKey);
+    return { privateKey: privateKey, address: account.address };
+}
+
+async function checkBalance(networkName, rpcUrl, address) {
+    const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+    try {
+        const balance = await web3.eth.getBalance(address);
+        return web3.utils.fromWei(balance, 'ether');
+    } catch (error) {
+        console.error(`Ошибка при подключении к ${networkName}:`, error);
+        return null;
+    }
+}
+
+async function searchWallets() {
+    const logsElement = document.getElementById('logs');
+    logsElement.innerHTML = ''; // Очистка logs перед новым поиском
+    let foundAmount = 0;
+    let checkedAmount = 0;
+
+    for (let i = 0; i < 1000; i++) { // Количество адресов для генерации
+        const wallet = generateWallet();
+        for (const [networkName, rpcUrl] of Object.entries(NETWORKS)) {
+            checkedAmount++;
+            document.getElementById('checkedAmount').innerText = checkedAmount;
+            const balance = await checkBalance(networkName, rpcUrl, wallet.address);
+            if (balance > 0) {
+                foundAmount++;
+                document.getElementById('foundAmount').innerText = foundAmount;
+                document.getElementById('foundValue').innerText = (parseFloat(document.getElementById('foundValue').innerText) + parseFloat(balance)).toFixed(2) + '$';
+                logsElement.innerHTML += `<p>Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}</p>`;
+                console.log(`Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}`);
+            }
         }
- function changeTheme(theme) {
+    }
+    console.log('Поиск завершен');
+}
+
+// Запуск поиска по нажатию на кнопку
+function startFunction() {
+    document.getElementById('foundAmount').innerText = '0';
+    document.getElementById('foundValue').innerText = '0.00$';
+    document.getElementById('checkedAmount').innerText = '0';
+    searchWallets();
+}
+
+// Инициализация Telegram Web App
+window.Telegram.WebApp.ready();
+
+// Получение данных пользователя
+const user = window.Telegram.WebApp.initDataUnsafe?.user;
+if (user) {
+    document.getElementById('username').innerText = `@${user.username}`;
+    document.getElementById('userInfo').innerText = `ID: ${user.id}, Имя: ${user.first_name} ${user.last_name ? user.last_name : ''}`;
+    document.getElementById('userAvatar').src = user.photo_url || 'default_avatar.png'; // Используйте URL аватарки, если доступно
+}
+
+// Функция для открытия модального окна
+function openModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+}
+
+// Функция для изменения темы
+function changeTheme(theme) {
     if (theme === 'dark') {
         document.body.style.background = 'linear-gradient(to bottom right, #000000, #333333)';
     } else {
@@ -270,36 +252,23 @@ body {
     }
 }
 
-document.getElementById('themes').addEventListener('change', function(event) {
-    changeTheme(event.target.value);
-});
-        
-        // Функция для закрытия модального окна
-        function closeModal() {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
+// Функция для закрытия модального окна
+function closeModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
 
-        // Закрытие модального окна при клике вне его
-        window.onclick = function(event) {
-            var modal = document.getElementById("myModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    var modal = document.getElementById("myModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
 
-        // Функция для кнопки "НАЧАТЬ"
-        function startFunction() {
-            alert('Функционал "НАЧАТЬ" пока не реализован.');
-        }
+// Пример добавления списка кошельков (имитация)
+document.getElementById('walletsList').innerText = 'Wallet1, Wallet2, Wallet3'; // Замените на реальный список кошельков
 
-        // Пример добавления списка кошельков (имитация)
-        document.getElementById('walletsList').innerText = 'Wallet1, Wallet2, Wallet3'; // Замените на реальный список кошельков
-
-        // Обработка изменения темы (имитация)
-        document.getElementById('themes').addEventListener('change', function(event) {
-            alert(`Вы выбрали тему: ${event.target.value}`);
-        });
-    </script>
+</script>
 </body>
 </html>
