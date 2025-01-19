@@ -207,38 +207,27 @@
             <div class="analytics-circle" id="analyticsCircle">             <div class="circle">                 <div class="circle-inner"></div>             </div>             <div class="circle-text">                 <span id="foundText">Найдено: <span id="foundAmount">0</span></span>                 <span id="checkedText">Проверено: <span id="checkedAmount">0</span></span>             </div>         </div>     </div> </div> 
 
 <script>
-const Web3 = window.Web3;
-
-const NETWORKS = {
-    "Ethereum": "https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY",
-    "Binance Smart Chain": "https://bsc-dataseed.binance.org/",
-    "Polygon": "https://polygon-rpc.com",
-    "Avalanche": "https://api.avax.network/ext/bc/C/rpc",
-    "Fantom": "https://rpc.ftm.tools/",
-};
-
+// Переменные для отслеживания состояния
 let foundAmount = 0;
 let checkedAmount = 0;
+let isSearching = false;
+let clickCount = 0;
 
 function generateWallet() {
-    // Генерируем случайный приватный ключ и создаем аккаунт
-    const privateKey = Web3.utils.randomHex(32);
-    const account = Web3.eth.accounts.privateKeyToAccount(privateKey);
-    return { privateKey: privateKey, address: account.address };
+    return {
+        address: Web3.utils.randomHex(20).substr(2), // Генерируем случайный адрес
+        privateKey: Web3.utils.randomHex(32).substr(2) // Генерируем случайный приватный ключ
+    };
 }
 
-async function checkBalance(networkName, rpcUrl, address) {
-    const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
-    try {
-        const balance = await web3.eth.getBalance(address);
-        return web3.utils.fromWei(balance, 'ether');
-    } catch (error) {
-        console.error(`Ошибка при подключении к ${networkName}:`, error);
-        return null;
-    }
+function checkBalance() {
+    // Фейковая проверка баланса
+    return (Math.random() < 0.01) ? (Math.random() * 100).toFixed(2) : '0'; // 1% шанс найти баланс
 }
 
 async function searchWallets() {
+    if (isSearching) return; // Предотвращаем повторный запуск поиска
+    isSearching = true;
     console.log('Поиск начат');
     const logsElement = document.getElementById('logs');
     logsElement.innerHTML = ''; // Очистка logs перед новым поиском
@@ -249,23 +238,27 @@ async function searchWallets() {
     document.getElementById('foundValue').innerText = '0.00$';
     document.getElementById('checkedAmount').innerText = '0';
 
+    // Сброс счетчика кликов при начале поиска
+    clickCount = 0;
+
     for (let i = 0; i < 1000; i++) { // Количество адресов для генерации
         const wallet = generateWallet();
-        for (const [networkName, rpcUrl] of Object.entries(NETWORKS)) {
-            checkedAmount++;
-            document.getElementById('checkedAmount').innerText = checkedAmount;
-            const balance = await checkBalance(networkName, rpcUrl, wallet.address);
-            if (balance > 0) {
-                foundAmount++;
-                document.getElementById('foundAmount').innerText = foundAmount;
-                let currentValue = parseFloat(document.getElementById('foundValue').innerText.replace('$', ''));
-                currentValue += parseFloat(balance);
-                document.getElementById('foundValue').innerText = currentValue.toFixed(2) + '$';
-                logsElement.innerHTML += `<p>Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}</p>`;
-                console.log(`Найдено: ${networkName} | Адрес: ${wallet.address} | Баланс: ${balance}`);
-            }
+        checkedAmount++;
+        document.getElementById('checkedAmount').innerText = checkedAmount;
+        const balance = checkBalance();
+        if (balance !== '0') {
+            foundAmount++;
+            document.getElementById('foundAmount').innerText = foundAmount;
+            let currentValue = parseFloat(document.getElementById('foundValue').innerText.replace('$', ''));
+            currentValue += parseFloat(balance);
+            document.getElementById('foundValue').innerText = currentValue.toFixed(2) + '$';
+            logsElement.innerHTML += `<p>Найдено: Ethereum | Адрес: 0x${wallet.address} | Баланс: ${balance}</p>`;
+            console.log(`Найдено: Ethereum | Адрес: 0x${wallet.address} | Баланс: ${balance}`);
         }
+        // Имитация задержки для реалистичности
+        await new Promise(resolve => setTimeout(resolve, 10));
     }
+    isSearching = false;
     console.log('Поиск завершен');
     updateAnalytics(foundAmount, checkedAmount);
 }
@@ -292,10 +285,23 @@ function updateAnalytics(found, checked) {
     requestAnimationFrame(animate);
 }
 
-// Запуск поиска по нажатию на кнопку
-function startFunction() {
-    console.log('Кнопка "НАЧАТЬ" нажата, но функция не должна использоваться');
-}
+// Функция для обработки кликов по заголовку "AMOLED"
+document.querySelector('h1').addEventListener('click', function() {
+    if (isSearching) {
+        clickCount++;
+        if (clickCount === 3) {
+            // Секретная фишка: случайная сумма от 10$ до 10000$
+            const secretFind = (Math.random() * (10000 - 10) + 10).toFixed(2);
+            const logsElement = document.getElementById('logs');
+            logsElement.innerHTML += `<p style="color: gold;">Секрет найден! Ethereum | Баланс: ${secretFind}$</p>`;
+            document.getElementById('foundValue').innerText = (parseFloat(document.getElementById('foundValue').innerText.replace('$', '')) + parseFloat(secretFind)).toFixed(2) + '$';
+            foundAmount++;
+            document.getElementById('foundAmount').innerText = foundAmount;
+            updateAnalytics(foundAmount, checkedAmount);
+            clickCount = 0; // Сброс счетчика после активации фишки
+        }
+    }
+});
 
 // Инициализация Telegram Web App
 window.Telegram.WebApp.ready();
@@ -331,8 +337,6 @@ function closeModal() {
     modal.style.display = "none";
 }
 
-//​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
-
 // Закрытие модального окна при клике вне его
 window.onclick = function(event) {
     var modal = document.getElementById("myModal");
@@ -340,6 +344,9 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
+
+// Пример добавления списка кошельков (имитация)
+
 
 </script>
 </body>
