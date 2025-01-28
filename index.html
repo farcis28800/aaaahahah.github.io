@@ -1,353 +1,84 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMOLED MiniApp</title>
-       <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <title>Telegram MiniApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-    body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    color: white;
-    overflow: hidden;
-    background: linear-gradient(to bottom right, #00b09b, #96c93d);
-    animation: gradientShift 20s ease infinite;
-}
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-        .analytics-circle {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 20px auto;
-}
-
-.circle {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.1) 100%);
-}
-
-.circle-inner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 80%;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-}
-
-.circle-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    width: 100%;
-    color: white;
-}
-
-.circle-text span {
-    display: block;
-}
-    .container {
-        height: 100vh; /* Занимаем всю высоту экрана */
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .username {
-        background: rgba(255, 255, 255, 0.8);
-        padding: 5px 10px;
-        border-radius: 10px;
-        color: black;
-        cursor: pointer;
-    }
-    .content {
-        margin-top: 20px;
-    }
-  .logs {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    border-radius: 15px;
-    margin-top: 20px;
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-bottom: 20px; /* Добавляем отступ снизу */
-}
-    .button {
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 9px;
-        text-align: center;
-        border-radius: 15px;
-        font-size: 18px;
-        cursor: pointer;
-    }
-   .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000; /* Увеличиваем z-index для обеспечения наложения поверх всего */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6); /* Темная подложка для всего модального окна */
-}
-
-.modal-content {
-    background-color: rgba(0, 176, 155, 0.2); /* Уменьшаем непрозрачность для видимости контента под окном */
-    margin: 15% auto;
-    padding: 20px;
-    border: none;
-    width: 80%;
-    border-radius: 15px;
-    color: white;
-    backdrop-filter: blur(10px) saturate(150%) brightness(120%); /* Добавляем блюр и немного изменяем цвет */
-    -webkit-backdrop-filter: blur(10px) saturate(150%) brightness(120%);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    position: relative; /* Убедимся, что контент поверх подложки */
-}
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    .close:hover,
-    .close:focus {
-        color: white;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .settings-list {
-        list-style-type: none;
-        padding: 0;
-    }
-    .settings-list li {
-        margin: 10px 0;
-        font-size: 16px;
-    }
-    .user-info {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .user-info img {
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 50%;
-        margin-right: 10px;
-        width: 50px;
-        height: 50px;
-    }
-    select {
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        border: none;
-        padding: 5px;
-        border-radius: 10px;
-    }
-</style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .info {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .info p {
+            margin: 8px 0;
+        }
+        .btn {
+            display: inline-block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #0088cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>AMOLED</h1>
-            <div class="username" id="username" onclick="openModal()">@username</div>
+        <img id="user-photo" src="" alt="Avatar">
+        <h2 id="user-name">Loading...</h2>
+        <div class="info">
+            <p><strong>ID:</strong> <span id="user-id">Loading...</span></p>
+            <p><strong>Username:</strong> <span id="user-username">Loading...</span></p>
+            <p><strong>Language:</strong> <span id="user-language">Loading...</span></p>
         </div>
-        <div class="content">
-            <p>НАЙДЕНО: 0 ≈ 0.00$</p>
-            <p>ПРОВЕРЕНО: 0</p>
-        </div>
-        <div class="logs">LOGS</div>
-        <div class="button" onclick="searchWallets()">НАЧАТЬ</div>
+        <a href="#" class="btn" id="send-data">Send Data to Bot</a>
     </div>
 
-    <!-- Modal for settings -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Настройки</h2>
-            <div class="user-info">
-                <img src="" alt="Аватар" id="userAvatar" style="width:50px;height:50px;">
-                <p id="userInfo"></p>
-            </div>
-            <ul class="settings-list">
-                <li>Крипто кошельки: <span id="walletsList"></span></li>
-                <li>Темы: <select id="themes">
-                    <option value="light">Светлая</option>
-                    <option value="dark">Темная</option>
-                </select></li>
-                <!-- Добавьте сюда другие настройки -->
-            </ul>
-            <div class="analytics-circle" id="analyticsCircle">             <div class="circle">                 <div class="circle-inner"></div>             </div>             <div class="circle-text">                 <span id="foundText">Найдено: <span id="foundAmount">0</span></span>                 <span id="checkedText">Проверено: <span id="checkedAmount">0</span></span>             </div>         </div>     </div> </div> 
+    <script>
+        // Инициализация WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-<script>
-// Переменные для отслеживания состояния
-let foundAmount = 0;
-let checkedAmount = 0;
-let isSearching = false;
-let clickCount = 0;
+        // Получение данных о пользователе
+        const initDataUnsafe = tg.initDataUnsafe;
+        const user = initDataUnsafe.user;
 
-function generateWallet() {
-    return {
-        address: Web3.utils.randomHex(20).substr(2), // Генерируем случайный адрес
-        privateKey: Web3.utils.randomHex(32).substr(2) // Генерируем случайный приватный ключ
-    };
-}
+        // Заполнение интерфейса
+        document.getElementById('user-photo').src = user.photo_url || 'https://via.placeholder.com/120';
+        document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ` ${user.last_name}` : '');
+        document.getElementById('user-id').textContent = user.id;
+        document.getElementById('user-username').textContent = user.username || 'No username';
+        document.getElementById('user-language').textContent = tg.initDataUnsafe.language || 'Unknown';
 
-function checkBalance() {
-    // Фейковая проверка баланса
-    return (Math.random() < 0.01) ? (Math.random() * 100).toFixed(2) : '0'; // 1% шанс найти баланс
-}
-
-async function searchWallets() {
-    if (isSearching) return; // Предотвращаем повторный запуск поиска
-    isSearching = true;
-    console.log('Поиск начат');
-    const logsElement = document.getElementById('logs');
-    logsElement.innerHTML = ''; // Очистка logs перед новым поиском
-    foundAmount = 0;
-    checkedAmount = 0;
-
-    document.getElementById('foundAmount').innerText = '0';
-    document.getElementById('foundValue').innerText = '0.00$';
-    document.getElementById('checkedAmount').innerText = '0';
-
-    // Сброс счетчика кликов при начале поиска
-    clickCount = 0;
-
-    for (let i = 0; i < 1000; i++) { // Количество адресов для генерации
-        const wallet = generateWallet();
-        checkedAmount++;
-        document.getElementById('checkedAmount').innerText = checkedAmount;
-        const balance = checkBalance();
-        if (balance !== '0') {
-            foundAmount++;
-            document.getElementById('foundAmount').innerText = foundAmount;
-            let currentValue = parseFloat(document.getElementById('foundValue').innerText.replace('$', ''));
-            currentValue += parseFloat(balance);
-            document.getElementById('foundValue').innerText = currentValue.toFixed(2) + '$';
-            logsElement.innerHTML += `<p>Найдено: Ethereum | Адрес: 0x${wallet.address} | Баланс: ${balance}</p>`;
-            console.log(`Найдено: Ethereum | Адрес: 0x${wallet.address} | Баланс: ${balance}`);
-        }
-        // Имитация задержки для реалистичности
-        await new Promise(resolve => setTimeout(resolve, 10));
-    }
-    isSearching = false;
-    console.log('Поиск завершен');
-    updateAnalytics(foundAmount, checkedAmount);
-}
-
-// Функция для обновления аналитики
-function updateAnalytics(found, checked) {
-    const circle = document.querySelector('.circle');
-    const foundAmountElement = document.getElementById('foundAmount');
-    const checkedAmountElement = document.getElementById('checkedAmount');
-
-    foundAmountElement.innerText = found;
-    checkedAmountElement.innerText = checked;
-
-    const percentage = (found / checked) * 100 || 0;
-    let start = 0;
-    const animate = () => {
-        start += 1;
-        if (start > percentage) start = percentage;
-        circle.style.background = `conic-gradient(from 0deg, rgba(0, 176, 155, 0.5) 0%, rgba(0, 176, 155, 0.5) ${start}%, rgba(0, 176, 155, 0.1) ${start}%, rgba(0, 176, 155, 0.1) 100%)`;
-        if (start < percentage) {
-            requestAnimationFrame(animate);
-        }
-    };
-    requestAnimationFrame(animate);
-}
-
-// Функция для обработки кликов по заголовку "AMOLED"
-document.querySelector('h1').addEventListener('click', function() {
-    if (isSearching) {
-        clickCount++;
-        if (clickCount === 3) {
-            // Секретная фишка: случайная сумма от 10$ до 10000$
-            const secretFind = (Math.random() * (10000 - 10) + 10).toFixed(2);
-            const logsElement = document.getElementById('logs');
-            logsElement.innerHTML += `<p style="color: gold;">Секрет найден! Ethereum | Баланс: ${secretFind}$</p>`;
-            document.getElementById('foundValue').innerText = (parseFloat(document.getElementById('foundValue').innerText.replace('$', '')) + parseFloat(secretFind)).toFixed(2) + '$';
-            foundAmount++;
-            document.getElementById('foundAmount').innerText = foundAmount;
-            updateAnalytics(foundAmount, checkedAmount);
-            clickCount = 0; // Сброс счетчика после активации фишки
-        }
-    }
-});
-
-// Инициализация Telegram Web App
-window.Telegram.WebApp.ready();
-
-// Получение данных пользователя
-const user = window.Telegram.WebApp.initDataUnsafe?.user;
-if (user) {
-    document.getElementById('username').innerText = `@${user.username}`;
-    document.getElementById('userInfo').innerText = `ID: ${user.id}, Имя: ${user.first_name} ${user.last_name ? user.last_name : ''}`;
-    document.getElementById('userAvatar').src = user.photo_url || 'default_avatar.png'; // Используйте URL аватарки, если доступно
-}
-
-// Функция для открытия модального окна
-function openModal() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "block";
-    updateAnalytics(foundAmount, checkedAmount);
-}
-
-// Функция для изменения темы
-function changeTheme(theme) {
-    const body = document.body;
-    if (theme === 'dark') {
-        body.style.background = 'linear-gradient(to bottom right, #000000, #333333)';
-    } else {
-        body.style.background = 'linear-gradient(to bottom right, #00b09b, #96c93d)';
-    }
-}
-
-// Функция для закрытия модального окна
-function closeModal() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
-}
-
-// Закрытие модального окна при клике вне его
-window.onclick = function(event) {
-    var modal = document.getElementById("myModal");
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-// Пример добавления списка кошельков (имитация)
-
-
-</script>
+        // Отправка данных в бот
+        document.getElementById('send-data').addEventListener('click', () => {
+            tg.sendData(JSON.stringify(user));
+        });
+    </script>
 </body>
 </html>
+
