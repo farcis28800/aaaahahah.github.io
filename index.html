@@ -1,84 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram MiniApp</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 400px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
-        .info {
-            text-align: left;
-            margin-top: 20px;
-        }
-        .info p {
-            margin: 8px 0;
-        }
-        .btn {
-            display: inline-block;
-            margin: 10px auto;
-            padding: 10px 20px;
-            background-color: #0088cc;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram MiniApp</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    img {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+    }
+    .info {
+      margin-top: 20px;
+    }
+    .info span {
+      display: block;
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img id="user-photo" src="" alt="Avatar">
-        <h2 id="user-name">Loading...</h2>
-        <div class="info">
-            <p><strong>ID:</strong> <span id="user-id">Loading...</span></p>
-            <p><strong>Username:</strong> <span id="user-username">Loading...</span></p>
-            <p><strong>Language:</strong> <span id="user-language">Loading...</span></p>
-        </div>
-        <a href="#" class="btn" id="send-data">Send Data to Bot</a>
-    </div>
+  <h1>Информация о пользователе</h1>
+  <img id="avatar" alt="Avatar">
+  <div class="info">
+    <span><b>ID:</b> <span id="userId"></span></span>
+    <span><b>Имя:</b> <span id="firstName"></span></span>
+    <span><b>Фамилия:</b> <span id="lastName"></span></span>
+    <span><b>Юзернейм:</b> <span id="username"></span></span>
+  </div>
+  <script>
+    // Инициализация Web App
+    const tg = window.Telegram.WebApp;
 
-    <script>
-        // Инициализация WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    tg.ready();
 
-        // Получение данных о пользователе
-        const initDataUnsafe = tg.initDataUnsafe;
-        const user = initDataUnsafe.user;
+    // Получение данных пользователя
+    const initData = tg.initDataUnsafe.user;
 
-        // Заполнение интерфейса
-        document.getElementById('user-photo').src = user.photo_url || 'https://via.placeholder.com/120';
-        document.getElementById('user-name').textContent = user.first_name + (user.last_name ? ` ${user.last_name}` : '');
-        document.getElementById('user-id').textContent = user.id;
-        document.getElementById('user-username').textContent = user.username || 'No username';
-        document.getElementById('user-language').textContent = tg.initDataUnsafe.language || 'Unknown';
-
-        // Отправка данных в бот
-        document.getElementById('send-data').addEventListener('click', () => {
-            tg.sendData(JSON.stringify(user));
-        });
-    </script>
+    if (initData) {
+      document.getElementById('userId').innerText = initData.id;
+      document.getElementById('firstName').innerText = initData.first_name || 'Не указано';
+      document.getElementById('lastName').innerText = initData.last_name || 'Не указано';
+      document.getElementById('username').innerText = initData.username || 'Не указано';
+      document.getElementById('avatar').src = `https://t.me/i/userpic/320/${initData.id}.jpg`;
+    } else {
+      document.querySelector('.info').innerText = 'Не удалось получить информацию.';
+    }
+  </script>
 </body>
 </html>
-
