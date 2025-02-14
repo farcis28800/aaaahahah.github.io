@@ -8,17 +8,21 @@
 
 body {
     font-family: var(--tg-font-family, -apple-system, BlinkMacSystemFont, sans-serif);
-    background: var(--tg-theme-bg-color, var(--bg-color));
-    color: var(--tg-theme-text-color, var(--text-color));
+    background: var(--bg-color);
+    color: var(--text-color);
     text-align: center;
     margin: 0;
     padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #app {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
 }
 
 header {
@@ -27,7 +31,6 @@ header {
     justify-content: space-between;
     align-items: center;
     background: var(--card-bg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #user-info {
@@ -63,6 +66,13 @@ header {
     transition: width 0.3s;
 }
 
+main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #star-button {
     font-size: 60px;
     border: none;
@@ -80,6 +90,9 @@ nav {
     justify-content: space-around;
     padding: 10px;
     background: var(--card-bg);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 .tab {
@@ -106,11 +119,6 @@ button {
     padding: 10px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s;
-}
-
-button:active {
-    background: #444;
 }
 
 input {
