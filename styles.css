@@ -1,1 +1,119 @@
+:root {
+    --bg-color: #000;
+    --text-color: #fff;
+    --accent-color: #0088cc;
+    --card-bg: #1c1c1e;
+    --button-bg: #2c2c2e;
+}
 
+body {
+    font-family: var(--tg-font-family, -apple-system, BlinkMacSystemFont, sans-serif);
+    background: var(--bg-color);
+    color: var(--text-color);
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+header {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+}
+
+#stars-counter {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#energy-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--button-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+#energy-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--accent-color);
+    transition: width 0.3s;
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#star-button {
+    font-size: 60px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#star-button:active {
+    transform: scale(0.9);
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: var(--card-bg);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.tab {
+    padding: 10px;
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.tab.active {
+    color: var(--accent-color);
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    background: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+input {
+    background: var(--button-bg);
+    border: none;
+    padding: 10px;
+    color: var(--text-color);
+    text-align: center;
+    border-radius: 8px;
+}
