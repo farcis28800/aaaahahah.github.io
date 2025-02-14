@@ -18,10 +18,24 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("energy", energy);
     }
 
+    starButton.addEventListener("click", () => {
+        if (energy > 0) {
+            stars += 0.0001;
+            energy--;
+            updateUI();
+        }
+    });
+
+    setInterval(() => {
+        if (energy < energyMax) {
+            energy++;
+            updateUI();
+        }
+    }, 500);
+
     if (window.Telegram && Telegram.WebApp) {
         Telegram.WebApp.expand();
         Telegram.WebApp.ready();
-        document.documentElement.style.setProperty('--tg-theme-bg-color', Telegram.WebApp.themeParams.bg_color || '#121212');
 
         let user = Telegram.WebApp.initDataUnsafe.user;
         if (user) {
@@ -29,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("username").innerText = user.first_name;
             document.getElementById("avatar").src = user.photo_url || "default-avatar.png";
 
-            let referralLink = `https://t.me/yourbot?start=${userId}`;
+            let referralLink = `https://t.me/YOUR_BOT_USERNAME?start=${userId}`;
             referralInput.value = referralLink;
         }
     }
@@ -39,10 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Реферальная ссылка скопирована!");
     });
 
+    // Проверяем, есть ли реферальный код в URL
     const urlParams = new URLSearchParams(window.location.search);
     const referrerId = urlParams.get("start");
-    if (referrerId && userId !== referrerId) {
+    if (referrerId && (!localStorage.getItem("ref-earned") || localStorage.getItem("ref-earned") !== referrerId)) {
         stars += 0.0025;
+        localStorage.setItem("ref-earned", referrerId);
         updateUI();
     }
 });
