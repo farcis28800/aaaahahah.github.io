@@ -10,9 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const referralInput = document.getElementById("referral-link");
     const copyReferralBtn = document.getElementById("copy-referral");
 
-    const tabs = document.querySelectorAll(".tab");
-    const sections = document.querySelectorAll("section");
-
     function updateUI() {
         starsCounter.innerText = `⭐ ${stars.toFixed(4)}`;
         energyBar.style.width = `${(energy / energyMax) * 100}%`;
@@ -21,33 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("energy", energy);
     }
 
-    starButton.addEventListener("click", () => {
-        if (energy > 0) {
-            stars += 0.0001;
-            energy--;
-            updateUI();
-        }
-    });
-
-    setInterval(() => {
-        if (energy < energyMax) {
-            energy++;
-            updateUI();
-        }
-    }, 500);
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            tabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-
-            sections.forEach(section => section.classList.add("hidden"));
-            document.getElementById(tab.dataset.tab).classList.remove("hidden");
-        });
-    });
-
     if (window.Telegram && Telegram.WebApp) {
         Telegram.WebApp.expand();
+        Telegram.WebApp.ready();
+        document.documentElement.style.setProperty('--tg-theme-bg-color', Telegram.WebApp.themeParams.bg_color || '#121212');
+
         let user = Telegram.WebApp.initDataUnsafe.user;
         if (user) {
             userId = user.id;
@@ -60,12 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     copyReferralBtn.addEventListener("click", () => {
-        referralInput.select();
-        document.execCommand("copy");
+        navigator.clipboard.writeText(referralInput.value);
         alert("Реферальная ссылка скопирована!");
     });
 
-    // Обработка реферальной системы
     const urlParams = new URLSearchParams(window.location.search);
     const referrerId = urlParams.get("start");
     if (referrerId && userId !== referrerId) {
