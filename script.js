@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, 500);
 
+    // Обработка Telegram API
     if (window.Telegram && Telegram.WebApp) {
         Telegram.WebApp.expand();
         Telegram.WebApp.ready();
@@ -53,12 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Реферальная ссылка скопирована!");
     });
 
-    // Проверяем, есть ли реферальный код в URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const referrerId = urlParams.get("start");
-    if (referrerId && (!localStorage.getItem("ref-earned") || localStorage.getItem("ref-earned") !== referrerId)) {
-        stars += 0.0025;
-        localStorage.setItem("ref-earned", referrerId);
-        updateUI();
-    }
+    document.querySelectorAll(".tab").forEach(button => {
+        button.addEventListener("click", () => {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+            button.classList.add("active");
+            document.getElementById(button.dataset.tab).classList.remove("hidden");
+        });
+    });
 });
