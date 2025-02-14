@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Star Mains</title>
-    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
     <div id="app">
@@ -29,19 +29,23 @@
             <button class="tab" data-tab="upgrade">⚡</button>
         </nav>
 
-        <section id="bonuses" class="hidden">
+        <section id="bonuses" class="page hidden">
             <h2>Реферальная ссылка</h2>
-            <input type="text" id="referral-link" readonly>
-            <button id="copy-referral">Копировать</button>
+            <div class="card">
+                <input type="text" id="referral-link" readonly>
+                <button id="copy-referral">Копировать</button>
+            </div>
         </section>
 
-        <section id="upgrade" class="hidden">
+        <section id="upgrade" class="page hidden">
             <h2>Прокачка</h2>
-            <button id="upgrade-energy">+ Энергия</button>
-            <button id="upgrade-click">+ Клик</button>
+            <div class="card">
+                <button id="upgrade-energy">+ Энергия</button>
+                <button id="upgrade-click">+ Клик</button>
+            </div>
         </section>
     </div>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>
