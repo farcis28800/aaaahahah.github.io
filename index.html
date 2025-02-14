@@ -1,57 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telegram MiniApp</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    img {
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-    }
-    .info {
-      margin-top: 20px;
-    }
-    .info span {
-      display: block;
-      margin: 5px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Mains</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Информация о пользователе</h1>
-  <img id="avatar" alt="Avatar">
-  <div class="info">
-    <span><b>ID:</b> <span id="userId"></span></span>
-    <span><b>Имя:</b> <span id="firstName"></span></span>
-    <span><b>Фамилия:</b> <span id="lastName"></span></span>
-    <span><b>Юзернейм:</b> <span id="username"></span></span>
-  </div>
-  <script>
-    // Инициализация Web App
-    const tg = window.Telegram.WebApp;
+    <div id="app">
+        <header>
+            <div id="user-info">
+                <img id="avatar" src="default-avatar.png" alt="Avatar">
+                <span id="username">Гость</span>
+            </div>
+            <div id="stars-counter">⭐ 0.0001</div>
+            <div id="energy-bar">
+                <div id="energy-fill"></div>
+            </div>
+        </header>
+        
+        <main>
+            <button id="star-button">⭐</button>
+        </main>
 
-    tg.ready();
+        <nav>
+            <button class="tab active" data-tab="main">Главная</button>
+            <button class="tab" data-tab="bonuses">Бонусы</button>
+            <button class="tab" data-tab="upgrade">Прокачка</button>
+        </nav>
 
-    // Получение данных пользователя
-    const initData = tg.initDataUnsafe.user;
+        <section id="bonuses" class="hidden">
+            <h2>Рефералы</h2>
+            <input type="text" id="referral-link" readonly>
+            <button id="copy-referral">Копировать ссылку</button>
+            
+            <h2>Бонусы</h2>
+            <ul id="sponsors-list">
+                <li>Подпишитесь на @sponsor1 — получите 100⭐</li>
+                <li>Подпишитесь на @sponsor2 — получите 200⭐</li>
+            </ul>
+        </section>
 
-    if (initData) {
-      document.getElementById('userId').innerText = initData.id;
-      document.getElementById('firstName').innerText = initData.first_name || 'Не указано';
-      document.getElementById('lastName').innerText = initData.last_name || 'Не указано';
-      document.getElementById('username').innerText = initData.username || 'Не указано';
-      document.getElementById('avatar').src = `https://t.me/i/userpic/320/${initData.id}.jpg`;
-    } else {
-      document.querySelector('.info').innerText = 'Не удалось получить информацию.';
-    }
-  </script>
+        <section id="upgrade" class="hidden">
+            <h2>Прокачка</h2>
+            <button id="upgrade-energy">Улучшить энергию</button>
+            <button id="upgrade-click">Усилить клик</button>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
