@@ -1,9 +1,10 @@
 :root {
-    --bg-color: #000;
+    --bg-color: #0d0d0d;
     --text-color: #fff;
     --accent-color: #0088cc;
     --card-bg: #1c1c1e;
     --button-bg: #2c2c2e;
+    --button-hover: #3a3a3c;
 }
 
 body {
@@ -26,15 +27,28 @@ body {
 }
 
 header {
-    padding: 10px;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: var(--card-bg);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
+}
+
+#user-info {
+    display: flex;
+    align-items: center;
+}
+
+#avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
 #stars-counter {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
 }
 
@@ -62,7 +76,7 @@ main {
 }
 
 #star-button {
-    font-size: 60px;
+    font-size: 70px;
     border: none;
     background: none;
     cursor: pointer;
@@ -70,7 +84,7 @@ main {
 }
 
 #star-button:active {
-    transform: scale(0.9);
+    transform: scale(0.85);
 }
 
 nav {
@@ -81,6 +95,7 @@ nav {
     position: fixed;
     bottom: 0;
     width: 100%;
+    box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.05);
 }
 
 .tab {
@@ -90,6 +105,7 @@ nav {
     font-size: 20px;
     cursor: pointer;
     color: var(--text-color);
+    transition: color 0.2s;
 }
 
 .tab.active {
@@ -100,13 +116,36 @@ nav {
     display: none;
 }
 
+.page {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
+}
+
 button {
     background: var(--button-bg);
     color: var(--text-color);
     border: none;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
     cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: var(--button-hover);
 }
 
 input {
@@ -116,4 +155,5 @@ input {
     color: var(--text-color);
     text-align: center;
     border-radius: 8px;
+    width: 100%;
 }
