@@ -3,49 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Mains</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <title>Mamba - Telegram Bot</title>
+    <!-- Импорт шрифтов из Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffe4c4 100%);
+            color: #333;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Стили для заголовков */
+        .header h1, .features h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: #ff4500;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Кнопка */
+        .btn {
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background-color: #e03e00;
+        }
+
+        /* Пульсация кнопки */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Стили для текста описания */
+        .content {
+            background-color: #ffe4c4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* Стили для блока особенностей */
+        .features h2 {
+            font-size: 20px;
+        }
+
+        .feature-box {
+            background-color: #ffe4c4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: scale(1.03);
+        }
+
+        .feature-box p {
+            color: #333;
+        }
+
+        /* Анимация появления */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Анимация при скролле */
+        .slide-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .features h2 {
+                font-size: 18px;
+            }
+
+            .content p, .feature-box p {
+                font-size: 12px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <header>
-            <div id="user-info">
-                <img id="avatar" src="default-avatar.png" alt="Avatar">
-                <span id="username">Гость</span>
+    <div class="container">
+        <div class="header">
+            <h1 class="fade-in">МАМБА - БЫСТРЫЙ И ПРОСТОЙ БОТ ДЛЯ ПОКУПКИ STARS ПРЯМО В TELEGRAM!</h1>
+            <button class="btn pulse">Открыть ✈️</button>
+        </div>
+        <div class="content fade-in">
+            <p>Мы предоставляем универсального телеграмм бота, который позволит вам быстро и абсолютно безопасно купить Stars в телеграмм! Мы предоставляем одни из самых низких средних цен конкурентов.</p>
+        </div>
+        <div class="features">
+            <h2 class="fade-in">ОПЛАТА РУБЛЯМИ И КРИПТОВАЛЮТОЙ!</h2>
+            <div class="feature-box slide-up">
+                <p>Никаких лишних верификаций Заявки - пополни ⏰</p>
             </div>
-            <div id="stars-counter">⭐ 0.0001</div>
-            <div id="energy-bar">
-                <div id="energy-fill"></div>
+            <div class="feature-box slide-up">
+                <p>Сделки проходят автоматически и быстро 🚗</p>
             </div>
-        </header>
-
-        <main>
-            <button id="star-button">⭐</button>
-        </main>
-
-        <nav>
-            <button class="tab active" data-tab="main">🏠</button>
-            <button class="tab" data-tab="bonuses">🎁</button>
-            <button class="tab" data-tab="upgrade">⚡</button>
-        </nav>
-
-        <section id="bonuses" class="page hidden">
-            <h2>Реферальная ссылка</h2>
-            <div class="card">
-                <input type="text" id="referral-link" readonly>
-                <button id="copy-referral">Копировать</button>
+            <div class="feature-box slide-up">
+                <p>TON BTC ETH</p>
             </div>
-        </section>
-
-        <section id="upgrade" class="page hidden">
-            <h2>Прокачка</h2>
-            <div class="card">
-                <button id="upgrade-energy">+ Энергия</button>
-                <button id="upgrade-click">+ Клик</button>
-            </div>
-        </section>
+        </div>
     </div>
 
-    <script src="script.js?v=3"></script>
+    <!-- JavaScript для анимаций при скролле -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.slide-up');
+
+            const checkVisibility = () => {
+                elements.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top <= window.innerHeight * 0.8) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', checkVisibility);
+            checkVisibility(); // Проверяем сразу при загрузке
+        });
+    </script>
 </body>
 </html>
