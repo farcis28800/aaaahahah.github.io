@@ -6,7 +6,7 @@ from typing import Dict
 
 from trading_bot.config import settings
 from trading_bot.data.market_data import get_featured_klines, get_multi_timeframe_data
-from trading_bot.exchange.binance_client import BinanceFuturesClient
+from trading_bot.exchange.bybit_client import BybitClient
 from trading_bot.risk.manager import RiskManager, RiskState
 from trading_bot.strategy.mtf_momentum import MtfMomentumStrategy
 from trading_bot.strategy.scalper import FastScalperStrategy
@@ -14,7 +14,7 @@ from trading_bot.telegram.notify import send_message
 
 
 def run() -> None:
-    client = BinanceFuturesClient(settings.binance_api_key, settings.binance_api_secret, testnet=settings.binance_testnet)
+    client = BybitClient(testnet=settings.bybit_testnet)
     risk = RiskManager(
         risk_per_trade_pct=settings.risk.risk_per_trade_pct,
         max_daily_loss_pct=settings.risk.max_daily_loss_pct,
@@ -27,7 +27,7 @@ def run() -> None:
 
     open_positions: Dict[str, str] = {}
 
-    print("Starting live loop (paper_trading=%s, testnet=%s)" % (not settings.live_trading, settings.binance_testnet))
+    print("Starting live loop (paper_trading=%s, testnet=%s)" % (not settings.live_trading, settings.bybit_testnet))
 
     while True:
         try:
@@ -58,8 +58,7 @@ def run() -> None:
                         send_message(settings.telegram_bot_token, settings.telegram_chat_id, text)
 
                         if settings.live_trading:
-                            client.set_leverage(symbol, settings.risk.leverage)
-                            client.place_order(symbol, side="BUY" if final_signal.side == "long" else "SELL", quantity=qty)
+                            print("Live trading requires API keys; only signals will be sent.")
                         open_positions[symbol] = final_signal.side
 
                     elif symbol in open_positions:
@@ -69,8 +68,7 @@ def run() -> None:
                             print(text)
                             send_message(settings.telegram_bot_token, settings.telegram_chat_id, text)
                             if settings.live_trading:
-                                side = "SELL" if open_positions[symbol] == "long" else "BUY"
-                                client.place_order(symbol, side=side, quantity=0.0, reduce_only=True)  # reduce only market close
+                                print("Live trading requires API keys; only signals will be sent.")
                             del open_positions[symbol]
 
                 except Exception as sym_e:

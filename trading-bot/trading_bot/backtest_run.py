@@ -4,7 +4,7 @@ import argparse
 
 from trading_bot.backtest.backtester import backtest_single
 from trading_bot.config import settings
-from trading_bot.exchange.binance_client import BinanceFuturesClient
+from trading_bot.exchange.bybit_client import BybitClient
 from trading_bot.strategy.mtf_momentum import MtfMomentumStrategy
 from trading_bot.strategy.scalper import FastScalperStrategy
 
@@ -17,7 +17,7 @@ def main() -> None:
     parser.add_argument("--strategy", type=str, default="mtf", choices=["mtf", "scalper"])
     args = parser.parse_args()
 
-    client = BinanceFuturesClient(settings.binance_api_key, settings.binance_api_secret, testnet=True)
+    client = BybitClient(testnet=settings.bybit_testnet)
 
     if args.strategy == "mtf":
         strat = MtfMomentumStrategy(higher_tf="1h")

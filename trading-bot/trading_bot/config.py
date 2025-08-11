@@ -26,9 +26,7 @@ class RiskConfig(BaseModel):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    binance_api_key: str | None = os.getenv("BINANCE_API_KEY")
-    binance_api_secret: str | None = os.getenv("BINANCE_API_SECRET")
-    binance_testnet: bool = os.getenv("BINANCE_TESTNET", "true").lower() == "true"
+    bybit_testnet: bool = os.getenv("BYBIT_TESTNET", "false").lower() == "true"
 
     symbols: List[str] = _split_csv(os.getenv("SYMBOLS"), ["BTCUSDT", "ETHUSDT"])
     timeframes: List[str] = _split_csv(os.getenv("TIMEFRAMES"), ["1m", "5m", "1h", "4h"])

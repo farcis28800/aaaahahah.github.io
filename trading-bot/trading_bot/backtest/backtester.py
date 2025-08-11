@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from trading_bot.data.market_data import get_featured_klines
-from trading_bot.exchange.binance_client import BinanceFuturesClient
+from trading_bot.exchange.bybit_client import BybitClient
 from trading_bot.strategy.base import Signal, Strategy
 
 
@@ -43,15 +43,21 @@ def sharpe_ratio(returns: pd.Series) -> float:
 
 
 def backtest_single(
-    client: BinanceFuturesClient,
+    client: BybitClient,
     symbol: str,
     interval: str,
     strategy: Strategy,
     limit: int = 1500,
 ) -> BacktestResult:
-    df = get_featured_klines(client, symbol, interval, limit)
-    trades: List[Trade] = []
+    base_df = get_featured_klines(client, symbol, interval, limit)
 
+    higher_tf_name = getattr(strategy, "higher_tf", None)
+    higher_df = None
+    if hasattr(strategy, "generate_signal_mtf"):
+        higher_tf_name = higher_tf_name or "1h"
+        higher_df = get_featured_klines(client, symbol, higher_tf_name, limit)
+
+    trades: List[Trade] = []
     position: str = "flat"
     entry_price = 0.0
     entry_time = None
@@ -59,30 +65,33 @@ def backtest_single(
     equity = [1.0]
     returns = []
 
-    for i in range(50, len(df)):
-        window = df.iloc[: i + 1]
-        sig: Signal
-        if hasattr(strategy, "generate_signal"):
-            sig = strategy.generate_signal(window)  # type: ignore[assignment]
-        else:
-            raise ValueError("Strategy missing generate_signal")
+    for i in range(50, len(base_df)):
+        window_base = base_df.iloc[: i + 1]
 
-        price = float(window.iloc[-1]["close"])
-        atr = float(window.iloc[-1]["atr"])
+        if hasattr(strategy, "generate_signal_mtf") and higher_df is not None:
+            cur_time = window_base.index[-1]
+            window_higher = higher_df.loc[higher_df.index <= cur_time]
+            data = {interval: window_base}
+            data[higher_tf_name] = window_higher  # type: ignore[index]
+            sig: Signal = strategy.generate_signal_mtf(data)  # type: ignore[attr-defined]
+        else:
+            sig = strategy.generate_signal(window_base)
+
+        price = float(window_base.iloc[-1]["close"])
+        atr = float(window_base.iloc[-1]["atr"]) if "atr" in window_base.columns else max(price * 0.01, 1.0)
 
         if position == "flat":
             if sig.side in ("long", "short"):
                 position = sig.side
                 entry_price = price
-                entry_time = window.index[-1]
+                entry_time = window_base.index[-1]
         else:
-            # exit by stop or tp
             if position == "long":
                 stop = sig.stop_price or (entry_price - 2.0 * atr)
                 tp = sig.take_profit_price or (entry_price + 2.0 * atr)
                 if price <= stop or price >= tp:
                     pnl = (price - entry_price) / entry_price
-                    trades.append(Trade(entry_time, window.index[-1], position, entry_price, price, pnl * 100))
+                    trades.append(Trade(entry_time, window_base.index[-1], position, entry_price, price, pnl * 100))
                     equity.append(equity[-1] * (1 + pnl))
                     returns.append(pnl)
                     position = "flat"
@@ -91,7 +100,7 @@ def backtest_single(
                 tp = sig.take_profit_price or (entry_price - 2.0 * atr)
                 if price >= stop or price <= tp:
                     pnl = (entry_price - price) / entry_price
-                    trades.append(Trade(entry_time, window.index[-1], position, entry_price, price, pnl * 100))
+                    trades.append(Trade(entry_time, window_base.index[-1], position, entry_price, price, pnl * 100))
                     equity.append(equity[-1] * (1 + pnl))
                     returns.append(pnl)
                     position = "flat"

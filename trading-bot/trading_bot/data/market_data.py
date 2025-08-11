@@ -7,7 +7,7 @@ from ta.momentum import RSIIndicator
 from ta.trend import MACD
 from ta.volatility import AverageTrueRange, BollingerBands
 
-from trading_bot.exchange.binance_client import BinanceFuturesClient
+from trading_bot.exchange.bybit_client import BybitClient
 
 
 def compute_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -25,13 +25,13 @@ def compute_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_featured_klines(client: BinanceFuturesClient, symbol: str, interval: str, limit: int = 500) -> pd.DataFrame:
+def get_featured_klines(client: BybitClient, symbol: str, interval: str, limit: int = 500) -> pd.DataFrame:
     df = client.get_klines(symbol, interval, limit)
     return compute_features(df)
 
 
 def get_multi_timeframe_data(
-    client: BinanceFuturesClient,
+    client: BybitClient,
     symbol: str,
     intervals: List[str],
     limit: int = 500,
