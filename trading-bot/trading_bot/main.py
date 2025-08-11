@@ -10,6 +10,7 @@ from trading_bot.exchange.bybit_client import BybitClient
 from trading_bot.risk.manager import RiskManager, RiskState
 from trading_bot.strategy.mtf_momentum import MtfMomentumStrategy
 from trading_bot.strategy.scalper import FastScalperStrategy
+from trading_bot.strategy.ml_strategy import MLStrategy
 from trading_bot.telegram.notify import send_message
 
 
@@ -24,6 +25,12 @@ def run() -> None:
 
     mtf = MtfMomentumStrategy(higher_tf="1h")
     scalper = FastScalperStrategy()
+    ml = None
+    if settings.strategy in ("ml", "ensemble"):
+        try:
+            ml = MLStrategy(settings.model_path)
+        except Exception:
+            ml = None
 
     open_positions: Dict[str, str] = {}
 
@@ -41,7 +48,15 @@ def run() -> None:
                     mtf_signal = mtf.generate_signal_mtf(data)
                     scalp_signal = scalper.generate_signal(base_df)
 
-                    final_signal = mtf_signal if mtf_signal.side != "flat" else scalp_signal
+                    if settings.strategy == "mtf":
+                        final_signal = mtf_signal
+                    elif settings.strategy == "scalper":
+                        final_signal = scalp_signal
+                    elif settings.strategy == "ml" and ml is not None:
+                        final_signal = ml.generate_signal(base_df)
+                    else:
+                        # ensemble: prefer mtf, else ml, else scalper
+                        final_signal = mtf_signal if mtf_signal.side != "flat" else (ml.generate_signal(base_df) if ml else scalp_signal)
 
                     price = float(base_df.iloc[-1]["close"]) if len(base_df) else client.get_price(symbol)
                     atr = float(base_df.iloc[-1]["atr"]) if len(base_df) else price * 0.01

@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     timeframes: List[str] = _split_csv(os.getenv("TIMEFRAMES"), ["1m", "5m", "1h", "4h"])
     base_interval: str = os.getenv("BASE_INTERVAL", "5m")
 
+    strategy: str = os.getenv("STRATEGY", "mtf")  # mtf|scalper|ml|ensemble
+    model_path: str = os.getenv("MODEL_PATH", "models/nn_BTCUSDT_5m.npz")
+
     risk: RiskConfig = RiskConfig()
 
     telegram_bot_token: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
