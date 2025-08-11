@@ -1,0 +1,102 @@
+from __future__ import annotations
+
+import time
+from datetime import datetime
+from typing import Dict
+
+from trading_bot.config import settings
+from trading_bot.data.market_data import get_featured_klines, get_multi_timeframe_data
+from trading_bot.exchange.bybit_client import BybitClient
+from trading_bot.risk.manager import RiskManager, RiskState
+from trading_bot.strategy.mtf_momentum import MtfMomentumStrategy
+from trading_bot.strategy.scalper import FastScalperStrategy
+from trading_bot.strategy.ml_strategy import MLStrategy
+from trading_bot.telegram.notify import send_message
+
+
+def run() -> None:
+    client = BybitClient(testnet=settings.bybit_testnet)
+    risk = RiskManager(
+        risk_per_trade_pct=settings.risk.risk_per_trade_pct,
+        max_daily_loss_pct=settings.risk.max_daily_loss_pct,
+        leverage=settings.risk.leverage,
+        max_concurrent_positions=settings.risk.max_concurrent_positions,
+    )
+
+    mtf = MtfMomentumStrategy(higher_tf="1h")
+    scalper = FastScalperStrategy()
+    ml = None
+    if settings.strategy in ("ml", "ensemble"):
+        try:
+            ml = MLStrategy(settings.model_path)
+        except Exception:
+            ml = None
+
+    open_positions: Dict[str, str] = {}
+
+    print("Starting live loop (paper_trading=%s, testnet=%s)" % (not settings.live_trading, settings.bybit_testnet))
+
+    while True:
+        try:
+            balance = client.get_balance() if settings.live_trading else 1000.0
+            risk_state = RiskState(starting_balance=1000.0, current_balance=balance)
+
+            for symbol in settings.symbols:
+                try:
+                    data = get_multi_timeframe_data(client, symbol, [settings.base_interval, "1h"])  # base + higher
+                    base_df = data[settings.base_interval]
+                    mtf_signal = mtf.generate_signal_mtf(data)
+                    scalp_signal = scalper.generate_signal(base_df)
+
+                    if settings.strategy == "mtf":
+                        final_signal = mtf_signal
+                    elif settings.strategy == "scalper":
+                        final_signal = scalp_signal
+                    elif settings.strategy == "ml" and ml is not None:
+                        final_signal = ml.generate_signal(base_df)
+                    else:
+                        # ensemble: prefer mtf, else ml, else scalper
+                        final_signal = mtf_signal if mtf_signal.side != "flat" else (ml.generate_signal(base_df) if ml else scalp_signal)
+
+                    price = float(base_df.iloc[-1]["close"]) if len(base_df) else client.get_price(symbol)
+                    atr = float(base_df.iloc[-1]["atr"]) if len(base_df) else price * 0.01
+
+                    can_open = risk.can_open_new(len(open_positions), risk_state)
+
+                    if symbol not in open_positions and final_signal.side in ("long", "short") and can_open:
+                        qty = risk.quantity_from_atr(price, atr, balance, lambda q: client.round_qty(symbol, q))
+                        if qty <= 0:
+                            continue
+
+                        text = f"Signal {final_signal.side.upper()} {symbol} price={price:.2f} qty={qty:.6f}"
+                        print(text)
+                        send_message(settings.telegram_bot_token, settings.telegram_chat_id, text)
+
+                        if settings.live_trading:
+                            print("Live trading requires API keys; only signals will be sent.")
+                        open_positions[symbol] = final_signal.side
+
+                    elif symbol in open_positions:
+                        # simplistic flat when opposite signal appears
+                        if final_signal.side == "flat" or final_signal.side != open_positions[symbol]:
+                            text = f"Exit {symbol} by opposite/flat signal"
+                            print(text)
+                            send_message(settings.telegram_bot_token, settings.telegram_chat_id, text)
+                            if settings.live_trading:
+                                print("Live trading requires API keys; only signals will be sent.")
+                            del open_positions[symbol]
+
+                except Exception as sym_e:
+                    print(f"Error processing {symbol}: {sym_e}")
+
+            time.sleep(30)
+        except KeyboardInterrupt:
+            print("Stopped by user")
+            break
+        except Exception as e:
+            print(f"Loop error: {e}")
+            time.sleep(5)
+
+
+if __name__ == "__main__":
+    run()
